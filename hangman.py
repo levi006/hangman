@@ -12,8 +12,11 @@ import json
 words = ["apple", "foo", "michael"]
 # word_list = response.text.splitlines()
 
-word_list_index = random.randrange(0, len(word_list) -1)
-chosen_word = word_list[word_list_index]
+# word_index = random.randrange(0, len(word_list) -1)
+word_index = random.randrange(0, len(words) -1)
+
+# chosen_word = word_list[word_list_index]
+chosen_word = words[word_index]
 
 #correct_letters {letter:{index (integer), found (Boolean)}}
 correct_letters = {}
@@ -33,17 +36,25 @@ while not won and guess > 0:
   guessed_ltr = input("Letter?: ")
   guessed_ltr = guessed_ltr.strip().lower()
 
-  if guessed_ltr in correct_letters:
+  #second check for double letters
+  if guessed_ltr in incorrect_letters or \
+  (guessed_ltr in correct_letters and correct_letters[guessed_ltr]['found']):
+    print "You've already guessed this letter--try a different one. But you still have %s guesses left." % guess
+    print ' '.join(answer)
+
+  #if letter is correct
+  elif guessed_ltr in correct_letters:
     for word_idx in correct_letters[guessed_ltr]['index']:
       answer[word_idx] = guessed_ltr
-
-      
+    #changing status for found
+    correct_letters[guessed_ltr]['found'] = True
+    
+    if ''.join(answer) == chosen_word:
+      won = True 
+      break  
     print ' '.join(answer)
-    print "Correct! You still have %s guesses left." % guess  
+    print "Correct! You now have %s guesses left." % guess  
 
-
-  elif guessed_ltr in incorrect_letters:
-    print "You've already guessed this letter--try a different one."
 
 
   else:
@@ -55,13 +66,12 @@ while not won and guess > 0:
     print "You have guessed these letters: %s " % mistakes  
 
 
-  if ''.join(answer) == chosen_word:
-    won = True
+
 
 
 
 if won:
-  print("You won!")
+  print("Correct! You've won!")
 
 else:
   print("YOU'VE LOST. Hangman!")
