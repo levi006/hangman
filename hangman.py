@@ -20,11 +20,6 @@ payload = set_difficulty_settings()
 response = requests.get(url, params = payload) 
 words = response.text.splitlines()
 
-
-
- 
-
-
 word_index = random.randrange(0, len(words) -1)
 
 chosen_word = words[word_index]
@@ -41,6 +36,7 @@ won = False
 guess = 6
 
 while not won and guess > 0:
+
   guessed_ltr = raw_input("Guess a letter: ")
   guessed_ltr = guessed_ltr.strip().lower()
 
