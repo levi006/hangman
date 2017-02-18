@@ -33,7 +33,7 @@ won = False
 guess = 6
 
 while not won and guess > 0:
-  guessed_ltr = input("Letter?: ")
+  guessed_ltr = raw_input("Letter?: ")
   guessed_ltr = guessed_ltr.strip().lower()
 
   #second check for double letters
