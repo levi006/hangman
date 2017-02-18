@@ -1,28 +1,30 @@
 import random, requests
 
-url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
-
-
-# words = ['apple', 'berry']
-
 def set_difficulty_settings():
   difficulty_level = raw_input('Please select the difficulty level, from 1-10, where 1 is easy and 10 is the most difficult.')
   max_length = raw_input('Please select the max length of the generated word.')
   min_length = raw_input('Please select the min length of the generated word.')
 
   payload = {'difficulty': difficulty_level,
-            'max length': max_length,
-            'minimum length': min_length, 
+            'maxLength': max_length,
+            'minLength': min_length, 
             }
+  print payload
   return payload
 
-payload = set_difficulty_settings()
-response = requests.get(url, params = payload) 
-words = response.text.splitlines()
+def generate_word():
+  words = ['apple', 'berry']
+  # words = response.text.splitlines()
+  word_index = random.randrange(0, len(words) -1)
+  chosen_word = words[word_index]
+  return chosen_word
 
-word_index = random.randrange(0, len(words) -1)
+url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
+# payload = set_difficulty_settings()
+# response = requests.get(url, params = payload)
+response = requests.get(url)
+chosen_word = generate_word()
 
-chosen_word = words[word_index]
 correct_letters = {}
 answer = []
 incorrect_letters = set()
