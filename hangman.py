@@ -2,27 +2,20 @@ import random
 import requests
 import json 
 
-# url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
-# payload = {'difficulty':10}
-# response = requests.get(url, params = payload) 
-# print response.text
-# print type(response.text)
-# print repr(response.text)
+url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
+payload = {'difficulty':1}
+response = requests.get(url, params = payload) 
+print response.text
+print type(response.text)
+print repr(response.text)
 
-words = ["apple", "foo", "michael"]
-# word_list = response.text.splitlines()
-
-# word_index = random.randrange(0, len(word_list) -1)
+words = response.text.splitlines()
 word_index = random.randrange(0, len(words) -1)
 
-# chosen_word = word_list[word_list_index]
 chosen_word = words[word_index]
-
-#correct_letters {letter:{index (integer), found (Boolean)}}
 correct_letters = {}
 answer = []
 incorrect_letters = set()
-
 
 for idx, ltr in enumerate(chosen_word):
   correct_letters.setdefault(ltr, {'index':[], 'found': False})
@@ -33,7 +26,7 @@ won = False
 guess = 6
 
 while not won and guess > 0:
-  guessed_ltr = input("Letter?: ")
+  guessed_ltr = raw_input("Letter?: ")
   guessed_ltr = guessed_ltr.strip().lower()
 
   #second check for double letters
@@ -74,7 +67,7 @@ if won:
   print("Correct! You've won!")
 
 else:
-  print("YOU'VE LOST. Hangman!")
+  print('The gallows for you! The answer was "%s". ') % chosen_word
 
 
 
