@@ -58,13 +58,10 @@ def initiate_board(secret_word):
         print "_ " * max(range(len(secret_word)))
         return
 
-def play_round(words):
+def play_round(secret_word):
     """Contains the game play logic and messaging as game progresses."""
     guesses_remaining = 6
     guessed_letters = set()
-    secret_word = random.choice(words) # "apple"  # get_random_word(level)
-    # print secret_word
-
     initiate_board(secret_word)
 
     while True:
@@ -108,15 +105,16 @@ def play_round(words):
             print msg
 
         display_hangman(secret_word, guessed_letters)
-    return secret_word
           
 
 def play():
     """Lays out the general game sequence and resets a new game."""
     words = get_word_list()
+    secret_word = random.choice(words) # "apple"  # get_random_word(level)
+    # print secret_word
 
     while True:
-        result = play_round(words)
+        result = play_round(secret_word)
         if result:
             print "Hooray!You've won!"
             print "The secret word was %s." % secret_word
@@ -132,17 +130,6 @@ def play():
 
 if __name__ == "__main__":
     play()
-
-
-# while won == False and guess_count > 0:
-
-#     legal_ltr = prompt_guess(guess)
-
-#     if legal_ltr == secret_word:
-#         print "Didn't need all the guesses, did you?"
-#         won = True
-#         break
- 
 
 
 
