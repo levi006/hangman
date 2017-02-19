@@ -1,130 +1,150 @@
 import random, requests
 
-def set_difficulty_settings():
+def get_word_list():
+    """Pings the API to get a word list filtered by difficulty level"""
+
     while True:    
-        difficulty_level = raw_input('Please select the difficulty level, from 1-10, where 1 is easy and 10 is the most difficult.')
-        print difficulty_level.decode('utf-8')
-        print type(difficulty_level.decode('utf-8'))
-        if not difficulty_level.decode('utf-8').isnumeric() and 1 <= int(difficulty_level) <= 10:
-            print "oh noes only numbers from 1-10"
-        else:
+        level = raw_input(
+            'Please select the difficulty level, from 1-10, where 1 is easy and 10 is the most difficult.')
+
+        if level.isdigit() and 1 <= int(level) <= 10:
             break
-            return difficulty_level
 
-    max_length = raw_input('Please select the max length of the generated word.')
-    min_length = raw_input('Please select the min length of the generated word.')
+        else:
+            print "Only integers from 1-10 please!"
 
-    payload = {'difficulty': difficulty_level,
-                        'maxLength': max_length,
-                        'minLength': min_length, 
-                        }
-    print payload                   
-    return payload
+    # max_length = raw_input('Please select the max length of the generated word.')
+    # min_length = raw_input('Please select the min length of the generated word.')
+    payload = {"difficulty": level}
+    url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
 
-def generate_word():
-    # words = ['apple']
-    payload = set_difficulty_settings()
     response = requests.get(url, params = payload)
     words = response.text.splitlines()
-    word_index = random.randrange(0, len(words))
-    chosen_word = words[word_index]
-    return chosen_word
 
-#evaluate if guessed letter is a alphabetic
-def eval_alpha(guess):
+    return words
+
+def prompt_guess():
+    """Checks user  and restricts user input to alphabetic characters only. """
     
     while True:    
         guess = raw_input("Guess a letter: ")
         raw_ltr = guess.strip().lower()
 
         if not raw_ltr.isalpha():
-            print "oh noes only letters <-- (OMG MY BF WROTE THIS BC HE IS SO TWEE)"
+            print "oh noes only letters"
         else:
             return raw_ltr
 
-def display_hangman():
-    guessed_letters.add(legal_ltr)
-    mistakes = ' '.join(guessed_letters)
-    print "You have guessed these letters: %s " % mistakes
-    print ' '.join(answer)  
-    return
+def display_hangman(secret_word, guessed_letters):
+    """Prints out empty dashes for each character of the secret word and displays a running list of incorrectly guessed letters."""
+    board = ""
+    for ltr in secret_word:
+        if ltr in guessed_letters:
+            board += ltr
+        else:
+            board += "_"
+    print " ".join(board)
+
+    print "You've guessed: " + " ".join(sorted(guessed_letters))
+
+    # guessed_letters.add(legal_ltr)
+    # mistakes = ' '.join(guessed_letters)
+    # print "You have guessed these letters: %s " % mistakes
+    # print ' '.join(answer)  
+    # return
 
 def initiate_board(secret_word):
     for i in range(len(secret_word)):
         print "_ " * max(range(len(secret_word)))
         return
 
-#Gameplay
+def play_round(words):
+    """Contains the game play logic and messaging as game progresses."""
+    guesses_remaining = 6
+    guessed_letters = set()
+    secret_word = random.choice(words) # "apple"  # get_random_word(level)
+    # print secret_word
 
-url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
-secret_word = generate_word()
-initiate_board(secret_word)
-#correct letters = { letter : {count, found status}}
-guessed_letters = set()
-correct_letters = {}
-answer = []
-guess_count = 6
-guess = ''
-won = False
+    initiate_board(secret_word)
 
-for idx, ltr in enumerate(secret_word):
-    correct_letters.setdefault(ltr, {'index':[], 'found': False})
-    correct_letters[ltr]['index'].append(idx)
-    answer.append("_")
+    while True:
 
-while won == False and guess_count > 0:
+        ltr = prompt_guess()
 
-    legal_ltr = eval_alpha(guess)
+        if ltr == secret_word:
+            print "Didn't need all the guesses, did you?"
+            return True
 
-    if legal_ltr == secret_word:
-        print "Didn't need all the guesses, did you?"
-        won = True
-        break
-        #play_again()
-    elif len(legal_ltr) != 1 and legal_ltr != secret_word:
-        print "That wasn't the secret word. Try entering one letter at a time if you're not sure what the word is."
+        elif len(ltr) != 1:
+            print "That wasn't the secret word. Try entering one letter at a time if you're not sure what the word is."
+            continue
 
-    elif guess_count > 1 and legal_ltr in guessed_letters or \
-    (legal_ltr in correct_letters and correct_letters[legal_ltr]['found']):
-        print "You've already guessed this letter--try a different one. You still have %s guesses left." % guess_count
-        display_hangman() 
+        if ltr in guessed_letters:
+            if guesses_remaining == 1:
+                msg = "You still have one guess left"
+            else:
+                msg = "You have %d guesses left" % guesses_remaining
+            print "You've already la la la. " + msg
+            continue
 
-    elif guess_count == 1 and (legal_ltr in guessed_letters or (legal_ltr in correct_letters and correct_letters[legal_ltr]['found'])):
-        print "You've already guessed this letter--try a different one. You still have one guess left."
-        display_hangman() 
+        guessed_letters.add(ltr)
 
-    elif legal_ltr in correct_letters:
-        for word_idx in correct_letters[legal_ltr]['index']:
-            answer[word_idx] = legal_ltr
-        
-        #changing status to found
-        correct_letters[legal_ltr]['found'] = True
+        if ltr in secret_word:
+            print "Correct!"
+            if not(set(secret_word) - guessed_letters):
+                # They have guessed every correct letter
+                return True
 
-        if ''.join(answer) == secret_word:
-            won = True 
-            break    
-        print "Correct!" 
-        display_hangman()   
+        else:
+            guesses_remaining -= 1
 
-    else: 
-        #if letter is incorrect
-        guesses_left = 6 - guess_count
-        guess_count -= 1
-        
-        if guess_count == 1 :
-            print "Only one guess left! Make it count!"
-            display_hangman()
+            if guesses_remaining == 0:
+                return False 
 
-        else: 
-            print "Yikes! You now have %s guesses left." % guess_count
-            display_hangman()
+            if guesses_remaining == 1:
+                msg = "Only one guess left! Make it count!"
+            else:
+                msg = "Yikes! You now have %s guesses left." % guesses_remaining
+            print msg
 
-if won:
-    print("Hooray!You've won!")
-    print "The secret word was " + secret_word + "!!!"
+        display_hangman(secret_word, guessed_letters)
+    return secret_word
+          
 
-else:
-    print('The gallows for you! The answer was "%s". ') % secret_word
+def play():
+    """Lays out the general game sequence and resets a new game."""
+    words = get_word_list()
+
+    while True:
+        result = play_round(words)
+        if result:
+            print "Hooray!You've won!"
+            print "The secret word was %s." % secret_word
+        else:
+            print "The gallows for you! The answer was '%s'." % secret_word
+
+        again = raw_input("Play again? ")
+        if again.lower().startswith("n" or "q"):
+            print "Thanks for playing!"
+            break
+        else:
+            print "One hot new challenge coming up!"  
+
+if __name__ == "__main__":
+    play()
+
+
+# while won == False and guess_count > 0:
+
+#     legal_ltr = prompt_guess(guess)
+
+#     if legal_ltr == secret_word:
+#         print "Didn't need all the guesses, did you?"
+#         won = True
+#         break
+ 
+
+
 
 
 
