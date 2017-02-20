@@ -1,11 +1,11 @@
 import random, requests
+from collections import defaultdict
 
 def get_word_list():
-    """Pings the API to get a word list filtered by difficulty level"""
+    """Pings the API to get a word list filtered by difficulty level. Also asks user to select the difficulty level based on a 1-10 scale."""
 
     while True:    
-        level = raw_input(
-            'Please select the difficulty level, from 1-10, where 1 is easy and 10 is the most difficult.')
+        level = raw_input('Please select the difficulty level, from 1-10, where 1 is easy and 10 is the most difficult.')
 
         if level.isdigit() and 1 <= int(level) <= 10:
             break
@@ -13,8 +13,6 @@ def get_word_list():
         else:
             print "Only integers from 1-10 please!"
 
-    # max_length = raw_input('Please select the max length of the generated word.')
-    # min_length = raw_input('Please select the min length of the generated word.')
     payload = {"difficulty": level}
     url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
 
@@ -24,7 +22,7 @@ def get_word_list():
     return words
 
 def prompt_guess():
-    """Checks user  and restricts user input to alphabetic characters only. """
+    """Asks user for guess and validates guess. """
     
     while True:    
         guess = raw_input("Guess a letter: ")
@@ -51,12 +49,7 @@ def display_hangman(secret_word, guessed_letters):
     print " ".join(board)
 
     print "You've guessed: " + " ".join(sorted(guessed_letters))
-
-    # guessed_letters.add(legal_ltr)
-    # mistakes = ' '.join(guessed_letters)
-    # print "You have guessed these letters: %s " % mistakes
-    # print ' '.join(answer)  
-    # return
+    return
 
 def play_round(secret_word):
     """Contains the game play logic and messaging as game progresses."""
@@ -78,9 +71,9 @@ def play_round(secret_word):
 
         if ltr in guessed_letters:
             if guesses_remaining == 1:
-                msg = "You still have one guess left"
+                msg = "You still have one guess left."
             else:
-                msg = "You have %d guesses left" % guesses_remaining
+                msg = "You have %d guesses left." % guesses_remaining
             print "You've already guessed this letter. " + msg
             continue
 
@@ -105,28 +98,58 @@ def play_round(secret_word):
             print msg
 
         display_hangman(secret_word, guessed_letters)
-          
+    return
+    
+def evil_hangman(words, secret_word):
+    
+
+    def make_word_bank(words, secret_word):
+    """construct word bank of all words the same length as secret word"""
+        word_bank = []
+        for word in words:
+            if len(word) == len(secret_word):
+                word_bank.append(word)
+        return word_bank
+
+    
+    def switch_secret_word(guess, word, word_bank):
+        families = defaultdict(list)
+        for word in word_bank:
+            indices = []
+            for char in range(0, len(word)):
+                if word[char] == guess:
+                    indices.append(char)
+            families[tuple(indices)].append(word)
+        word_bank = max(families.values(), key=lambda fam: len(fam))
+        word = random.choice(word_bank)
+        return word
+    return
+
+def vanilla_hangman(secret_word):
+    pass
+
 
 def play():
     """Lays out the general game sequence and resets a new game."""
     words = get_word_list()
     secret_word = random.choice(words) # "apple"  # get_random_word(level)
     # print secret_word
+    evil_hangman(words, secret_word)
 
     while True:
         result = play_round(secret_word)
         if result:
-            print "Hooray!You've won!"
-            print "The secret word was %s." % secret_word
+            print "'Hooray!You've won! The secret word was '%s.'" % secret_word
         else:
             print "The gallows for you! The answer was '%s'." % secret_word
 
-        again = raw_input("Play again? ")
+        again = raw_input("Play again? [y/n]")
         if again.lower().startswith("n" or "q"):
             print "Thanks for playing!"
             break
         else:
             print "One hot new challenge coming up!"  
+    return
 
 if __name__ == "__main__":
     play()
