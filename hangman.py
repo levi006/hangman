@@ -35,8 +35,13 @@ def prompt_guess():
         else:
             return raw_ltr
 
+def initiate_board(secret_word):
+    for i in range(len(secret_word)):
+        print "_ " * max(range(len(secret_word)))
+        return
+
 def display_hangman(secret_word, guessed_letters):
-    """Prints out empty dashes for each character of the secret word and displays a running list of incorrectly guessed letters."""
+    """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters."""
     board = ""
     for ltr in secret_word:
         if ltr in guessed_letters:
@@ -52,11 +57,6 @@ def display_hangman(secret_word, guessed_letters):
     # print "You have guessed these letters: %s " % mistakes
     # print ' '.join(answer)  
     # return
-
-def initiate_board(secret_word):
-    for i in range(len(secret_word)):
-        print "_ " * max(range(len(secret_word)))
-        return
 
 def play_round(secret_word):
     """Contains the game play logic and messaging as game progresses."""
@@ -81,7 +81,7 @@ def play_round(secret_word):
                 msg = "You still have one guess left"
             else:
                 msg = "You have %d guesses left" % guesses_remaining
-            print "You've already la la la. " + msg
+            print "You've already guessed this letter. " + msg
             continue
 
         guessed_letters.add(ltr)
