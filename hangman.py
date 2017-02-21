@@ -25,20 +25,36 @@ def play():
 
     return
 
-def play_round(words, secret_word):
+def play_round(words, secret_word, is_evil="bunny"):
     """Contains the game play logic and messaging as game progresses."""
+    
     guesses_remaining = 6
     guessed_letters = set()
-    initiate_board(secret_word)
+    initiate_board(secret_word)    
+
+    if is_evil:
+        print "SECRET WORD " + secret_word
+        word_bank = make_word_bank(words, secret_word)
+        # print "WORD BANK: %s %s" % (len(word_bank), word_bank)
 
     while True:
 
         guessed_ltr = prompt_guess()
-        evil_hangman(guessed_ltr, words, secret_word)
-        print "SECRET WORD AFTER EVIL HANGMAN " + secret_word
+
+        if is_evil and guessed_ltr in secret_word:
+            secret_word, word_bank = switch_secret_word(guessed_ltr, word_bank)        
+            print "Correct!"
+            print "SECRET WORD AFTER EVIL HANGMAN " + secret_word
+            # print "WORD BANK: %s %s" % (len(word_bank), word_bank)
+
+            if not(set(secret_word) - guessed_letters):
+                # They have guessed every correct letter
+
+                return True
 
         if guessed_ltr == secret_word:
             print "Didn't need all the guesses, did you?"
+            print "'Hooray!You've won! The secret word was '%s.'" % secret_word
             return True
 
         elif len(guessed_ltr) != 1:
@@ -76,56 +92,64 @@ def play_round(words, secret_word):
         display_hangman(secret_word, guessed_letters)
     return
 
-def evil_hangman(guessed_ltr, words, secret_word):
-    print "IN EVIL HANGMAN"
-    print "This is SECRET WORD " + secret_word
 
-    def make_word_bank(words, secret_word):
-        """Construct word bank of all words the same length as secret word"""
-        word_bank = []
-        for word in words:
-            if len(word) == len(secret_word):
-                word_bank.append(word)
-        print "This is length of word bank: " + str(len(word_bank))
-        print "This is length of words in word bank: " + str(len(word_bank[0]))
-        print "This is length of words in word bank: " + str(len(word_bank[345]))
-        return word_bank
+def make_word_bank(words, secret_word):
+    """Construct word bank of all words the same length as secret word.
+
+        >>> make_word_bank(["ab", "aa", "ba", "foozle"], "ha")
+        ['ab', 'aa', 'ba']
+    """
     
-    def switch_secret_word(guessed_ltr, word_bank):
-        print "IN SWITCHING SECRET WORD"
-        word_families = defaultdict(list)
-        for word in word_bank:
-            indices = []
-            for ltr in range(0, len(word)):
-                if word[ltr] == guessed_ltr:
-                    indices.append(ltr)
-            word_families[tuple(indices)].append(word)
-        word_bank = max(word_families.values(), key=lambda fam: len(fam))
-        word = random.choice(word_bank)
-        secret_word = word
-        print "This is NEW SECRET WORD " + secret_word
-        return 
+    return [w for w in words if len(w) == len(secret_word)]    
     
-    make_word_bank(words, secret_word)
-    switch_secret_word(guessed_ltr, word_bank)
-    return secret_word
+def switch_secret_word(guessed_ltr, word_bank):
+    """Find new secret word from word bank of possibilities. 
+
+    Given a word bank of possible words, find the list of words that include the guessed letter
+    and which have the longest-set of matching locations of the letter. Choose one randomly
+    and return it along with the newly-reduced word bank.
+
+        >>> wb = ["can", "con", "non", "coy", "alf", "aaa"]
+        >>> switch_secret_word("n", wb)
+        ('coy', ['coy', 'alf', 'aaa'])
+    """
+
+    word_families = defaultdict(list)
+
+    for word in word_bank:
+
+        # find locations of guessed letter in word
+        indices = [i for i, ltr in enumerate(word) if ltr == guessed_ltr]
+        
+        # throw out words that include letter
+        if indices: 
+            continue
+
+        # {(0, 2): ["non"], (2,): ["can", "con"]}
+        word_families[tuple(indices)].append(word)
+
+    # find family with most words (eg ["can", "con"])
+    word_bank = max(word_families.values(), key=lambda fam: len(fam))
+
+    # word = random.choice(word_bank)
+
+    return (word, word_bank) 
 
 def get_word_list():
-    """Pings the API to get a word list filtered by difficulty level. Also asks user to select the difficulty level based on a 1-10 scale."""
+    """Choose difficultly level and get list of words from API for that level."""
 
     while True:    
-        level = raw_input('Please select the difficulty level, from 1-10, where 1 is easy and 10 is the most difficult.')
+        level = raw_input('Select the difficulty level (1=easiest to 10=hardest)')
 
         if level.isdigit() and 1 <= int(level) <= 10:
             break
 
-        else:
-            print "Only integers from 1-10 please!"
+        print "Only integers from 1-10 please!"
 
-    payload = {"difficulty": level}
-    url = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
+    params = {"difficulty": level}
+    URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
 
-    response = requests.get(url, params = payload)
+    response = requests.get(URL, params=params)
     words = response.text.splitlines()
 
     return words
