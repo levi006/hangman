@@ -25,32 +25,33 @@ def play():
 
     return
 
-def play_round(words, secret_word, is_evil="bunny"):
+def play_round(words, secret_word, is_evil=False):
     """Contains the game play logic and messaging as game progresses."""
     
     guesses_remaining = 6
     guessed_letters = set()
-    initiate_board(secret_word)    
+    initiate_board(secret_word)
+    draw_gallows(guesses_remaining)    
 
     if is_evil:
         print "SECRET WORD " + secret_word
         word_bank = make_word_bank(words, secret_word)
-        # print "WORD BANK: %s %s" % (len(word_bank), word_bank)
+        print "WORD BANK: %s %s" % (len(word_bank), word_bank)
 
     while True:
 
         guessed_ltr = prompt_guess()
 
-        if is_evil and guessed_ltr in secret_word:
-            secret_word, word_bank = switch_secret_word(guessed_ltr, word_bank)        
-            print "Correct!"
-            print "SECRET WORD AFTER EVIL HANGMAN " + secret_word
+        # if is_evil:
+        #     secret_word, word_bank = switch_secret_word(guessed_ltr, word_bank)        
+        #     print "Correct!"
+        #     print "SECRET WORD AFTER EVIL HANGMAN " + secret_word
             # print "WORD BANK: %s %s" % (len(word_bank), word_bank)
 
-            if not(set(secret_word) - guessed_letters):
-                # They have guessed every correct letter
+        if not(set(secret_word) - guessed_letters):
+            # They have guessed every correct letter
 
-                return True
+            return True
 
         if guessed_ltr == secret_word:
             print "Didn't need all the guesses, did you?"
@@ -88,7 +89,7 @@ def play_round(words, secret_word, is_evil="bunny"):
             else:
                 msg = "Yikes! You now have %s guesses left." % guesses_remaining
             print msg
-
+            draw_gallows(guesses_remaining)
         display_hangman(secret_word, guessed_letters)
     return
 
@@ -122,7 +123,7 @@ def switch_secret_word(guessed_ltr, word_bank):
         indices = [i for i, ltr in enumerate(word) if ltr == guessed_ltr]
         
         # throw out words that include letter
-        if indices: 
+        if not indices: 
             continue
 
         # {(0, 2): ["non"], (2,): ["can", "con"]}
@@ -132,11 +133,12 @@ def switch_secret_word(guessed_ltr, word_bank):
     word_bank = max(word_families.values(), key=lambda fam: len(fam))
 
     # word = random.choice(word_bank)
+    word = word_bank[0]
 
     return (word, word_bank) 
 
 def get_word_list():
-    """Choose difficultly level and get list of words from API for that level."""
+    """Choose difficulty level and get list of words from API for that level."""
 
     while True:    
         level = raw_input('Select the difficulty level (1=easiest to 10=hardest)')
@@ -155,7 +157,14 @@ def get_word_list():
     return words
 
 def prompt_guess():
-    """Asks user for guess and validates guess. """
+    """Asks user for guess and validates guess. 
+        
+        guess = "a"
+        >>> prompt_guess("a")
+        >>> "oh noes only letters"
+
+
+    """
     
     while True:    
         guess = raw_input("Guess a letter: ")
@@ -167,20 +176,108 @@ def prompt_guess():
             return raw_ltr
 
 def initiate_board(secret_word):
+
     for i in range(len(secret_word)):
         print "_ " * max(range(len(secret_word)))
         return
 
 def display_hangman(secret_word, guessed_letters):
-    """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters."""
+    """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters.
+
+
+
+    """
+
     board = ""
     for ltr in secret_word:
         if ltr in guessed_letters:
             board += ltr
         else:
             board += "_"
+
     print " ".join(board)
     print "You've guessed: " + " ".join(sorted(guessed_letters))
+    return
+
+def draw_gallows(guesses_remaining):
+
+    imgs = [
+'''
+ _______
+|   |  \|
+    O   |
+   \|/  |
+    |   |
+   / \  |
+        |
+        |
+       ---''',
+
+'''
+ _______
+|   |  \|
+    O   |
+   \|/  |
+    |   |
+   /    |
+        |
+        |
+       ---''',
+
+'''
+ _______
+|   |  \|
+    O   |
+   \|/  |
+    |   |
+        |
+        |
+        |
+       ---''',
+'''
+ _______
+|   |  \|
+    O   |
+    |   |
+    |   |
+        |
+        |
+        |
+       ---''',
+
+'''
+ _______
+|   |  \|
+    O   |
+    |   |
+    |   |
+        |
+        |
+        |
+       ---''',
+
+ '''
+ _______
+|   |  \|
+        |
+        |
+        |
+        |
+        |
+        |
+       ---''',
+'''
+ _______
+|      \|
+        |
+        |
+        |
+        |
+        |
+        |
+       ---''']
+
+    print imgs[guesses_remaining]
     return
 
 if __name__ == "__main__":
