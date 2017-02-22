@@ -22,7 +22,6 @@ def play(is_evil=True):
 
         result = play_round(words, is_evil)
 
-<<<<<<< HEAD
         if result:
             print "Congratulations!"
 
@@ -36,24 +35,11 @@ def play(is_evil=True):
             return
         
         print "One hot new challenge coming up!" 
-=======
-        if not result:
-
-            again = raw_input("Play again? [y/n]")
-        
-            if again.lower().startswith("n" or "q"):
-                print "Thanks for playing!"
-                break
-            else:
-                print "One hot new challenge coming up!" 
->>>>>>> 47fc35b457ae26bf94af37d70c066083c8f9b537
 
 
-<<<<<<< HEAD
+
 def play_round(words, is_evil):
-=======
-def play_round(words, secret_word, is_evil=False):
->>>>>>> 47fc35b457ae26bf94af37d70c066083c8f9b537
+
     """Contains the game play logic and messaging as game progresses."""
 
     secret_word = random.choice(words)
@@ -145,13 +131,6 @@ def generate_word_bank(guessed_ltr, words):
         # find locations of guessed letter in word
         indices = [i for i, ltr in enumerate(word) if ltr == guessed_ltr]
         
-<<<<<<< HEAD
-=======
-        # throw out words that include letter
-        if indices: 
-            continue
-
->>>>>>> 47fc35b457ae26bf94af37d70c066083c8f9b537
         # {(0, 2): ["non"], (2,): ["can", "con"]}
         indices_words = word_families[tuple(indices)].append(word)
         print type(indices_words)
@@ -162,15 +141,7 @@ def generate_word_bank(guessed_ltr, words):
  
     return words 
 
-<<<<<<< HEAD
 def set_difficulty_level():
-=======
-    word = random.choice(word_bank)
-
-    return (word, word_bank) 
-
-def get_word_list():
->>>>>>> 47fc35b457ae26bf94af37d70c066083c8f9b537
     """Choose difficulty level and get list of words from API for that level."""
 
     while True:    
