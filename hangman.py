@@ -87,7 +87,6 @@ def play_round(words, is_evil):
     draw_gallows(guesses_remaining)    
     display_hangman(secret_word, guessed_letters)
 
-
     while True:
 
         guessed_ltr = prompt_guess()
@@ -117,8 +116,7 @@ def play_round(words, is_evil):
             words = generate_word_bank(guessed_ltr, words)
             secret_word = words[0]
 
-
-        print "SECRET WORD " + secret_word
+        # print "SECRET WORD " + secret_word
 
         guessed_letters.add(guessed_ltr)
 
@@ -128,7 +126,6 @@ def play_round(words, is_evil):
                 # They have guessed every correct letter
                 print "Hooray! You've won! The secret word was '%s'." % secret_word
                 return True
-
         else:
             # wrong guess
             guesses_remaining -= 1
@@ -147,8 +144,7 @@ def play_round(words, is_evil):
             draw_gallows(guesses_remaining)
 
         display_hangman(secret_word, guessed_letters)
-
-    
+   
 def generate_word_bank(guessed_ltr, words):
     """Builds a new word bank based on a guessed letter each turn. 
 
