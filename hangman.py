@@ -12,20 +12,17 @@ def play():
         result = play_round(words, secret_word)
 
         if result:
-            print "'Hooray!You've won! The secret word was '%s.'" % secret_word
-        else:
-            print "The gallows for you! The answer was '%s'." % secret_word
 
-        again = raw_input("Play again? [y/n]")
-        if again.lower().startswith("n" or "q"):
-            print "Thanks for playing!"
-            break
+            again = raw_input("Play again? [y/n]")
+            if again.lower().startswith("n" or "q"):
+                print "Thanks for playing!"
+                break
         else:
             print "One hot new challenge coming up!" 
 
     return
 
-def play_round(words, secret_word, is_evil=False):
+def play_round(words, secret_word, is_evil=True):
     """Contains the game play logic and messaging as game progresses."""
     
     guesses_remaining = 6
@@ -34,24 +31,19 @@ def play_round(words, secret_word, is_evil=False):
     draw_gallows(guesses_remaining)    
 
     if is_evil:
-        print "SECRET WORD " + secret_word
         word_bank = make_word_bank(words, secret_word)
         print "WORD BANK: %s %s" % (len(word_bank), word_bank)
+        print "SECRET WORD " + secret_word
 
     while True:
 
         guessed_ltr = prompt_guess()
 
-        # if is_evil:
-        #     secret_word, word_bank = switch_secret_word(guessed_ltr, word_bank)        
-        #     print "Correct!"
-        #     print "SECRET WORD AFTER EVIL HANGMAN " + secret_word
-            # print "WORD BANK: %s %s" % (len(word_bank), word_bank)
-
-        if not(set(secret_word) - guessed_letters):
-            # They have guessed every correct letter
-
-            return True
+        if is_evil and guessed_ltr in secret_word:
+            secret_word, word_bank = switch_secret_word(guessed_ltr, word_bank)        
+            print "Correct!"
+            print "WORD BANK: %s %s" % (len(word_bank), word_bank)
+            print "SECRET WORD AFTER EVIL HANGMAN " + secret_word
 
         if guessed_ltr == secret_word:
             print "Didn't need all the guesses, did you?"
@@ -76,6 +68,7 @@ def play_round(words, secret_word, is_evil=False):
             print "Correct!"
             if not(set(secret_word) - guessed_letters):
                 # They have guessed every correct letter
+                print "Hooray! You've won! The secret word was '%s'." % secret_word
                 return True
 
         else:
@@ -83,6 +76,7 @@ def play_round(words, secret_word, is_evil=False):
 
             if guesses_remaining == 0:
                 draw_gallows(guesses_remaining)
+                print "The gallows for you! The answer was '%s'." % secret_word
                 return False 
 
             if guesses_remaining == 1:
