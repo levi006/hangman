@@ -3,38 +3,78 @@ from collections import defaultdict
 from gallows import GALLOWS
 
 
-def play(is_evil=True):
-    """Lays out the general game sequence and resets a new game."""
-    
+def set_is_evil():
+    """Choose difficulty level and get list of words from API for that level."""
+   
+    answer = raw_input('Would you like to play on evil mode?[y/n]')
 
-    while True:
-        set_is_evil()
-        level = set_difficulty_level()
-        words = get_word_list(level)
-        
+    if answer == 'y':
+        is_evil = True
+        print "Evil mode on! MUAHAHA!"
+    else: 
+        is_evil = False
+        print "Vanilla it is!"
+        print is_evil
+    return is_evil
 
-        if is_evil:
-            # For the evil variant, the list of words all has to
-            # be the same length.
-            word_lens = [len(w) for w in words]
-            word_len = random.randint(min(word_lens), max(word_lens))
-            words = [w for w in words if len(w) == word_len]
+def set_difficulty_level():
+    """Choose difficulty level and get list of words from API for that level."""
 
-        result = play_round(words, is_evil)
+    while True:    
+        level = raw_input('Select the difficulty level (1=easiest to 10=hardest)')
 
-        if result:
-            print "Congratulations!"
+        if level.isdigit() and 1 <= int(level) <= 10:
+            return int(level)
 
+        print "Only integers from 1-10 please!"
+
+def display_hangman(secret_word, guessed_letters):
+    """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters.
+
+    """
+
+    board = ""
+    for ltr in secret_word:
+        if ltr in guessed_letters:
+            board += ltr
         else:
-            print "Better luck next time!"
- 
-        again = raw_input("Play again? [y/n]").lower()
- 
-        if again.startswith("n") or again.startswith("q"):
-            print "Thanks for playing!"
-            return
+            board += "_"
+
+    print " ".join(board)
+    print "You've guessed: " + " ".join(sorted(guessed_letters))
+
+def draw_gallows(guesses_remaining):
+    print GALLOWS[guesses_remaining] 
+
+def get_word_list(level):
+    """Choose difficulty level and get list of words from API for that level."""
+
+    params = {"difficulty": level}
+    URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
+
+    response = requests.get(URL, params=params)
+    words = response.text.splitlines()
+
+    return words
+
+def prompt_guess():
+    """Asks user for guess and validates guess. 
         
-        print "One hot new challenge coming up!" 
+        guess = "a"
+        >>> prompt_guess("a")
+        >>> "oh noes only letters"
+
+
+    """
+    
+    while True:    
+        guess = raw_input("Guess a letter: ")
+        raw_ltr = guess.strip().lower()
+
+        if not raw_ltr.isalpha():
+            print "oh noes only letters"
+        else:
+            return raw_ltr
 
 def play_round(words, is_evil):
     """Contains the game play logic and messaging as game progresses."""
@@ -130,7 +170,7 @@ def generate_word_bank(guessed_ltr, words):
         
         # {(0, 2): ["non"], (2,): ["can", "con"]}
         indices_words = word_families[tuple(indices)].append(word)
-        print type(indices_words)
+
     # find family with most words (eg ["can", "con"])
  
     words = max(word_families.values(), key=lambda fam: len(fam))
@@ -138,79 +178,39 @@ def generate_word_bank(guessed_ltr, words):
  
     return words 
 
-def set_difficulty_level():
-    """Choose difficulty level and get list of words from API for that level."""
+def play():
+    """Lays out the general game sequence and resets a new game."""
 
-    while True:    
-        level = raw_input('Select the difficulty level (1=easiest to 10=hardest)')
+    print "Welcome to Hangman!"
 
-        if level.isdigit() and 1 <= int(level) <= 10:
-            return int(level)
-
-        print "Only integers from 1-10 please!"
-
-def set_is_evil():
-    """Choose difficulty level and get list of words from API for that level."""
-   
-    answer = raw_input('Hi! Welcome to Hangman! Would you like to play on evil mode?[y/n]')
-
-    if answer == 'y':
-        is_evil = True
-        print "Evil mode on! MUAHAHA!"
-    else: 
-        is_evil = False
-        print "Vanilla it is!"
-
-    return is_evil   
-
-def get_word_list(level):
-    """Choose difficulty level and get list of words from API for that level."""
-
-    params = {"difficulty": level}
-    URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
-
-    response = requests.get(URL, params=params)
-    words = response.text.splitlines()
-
-    return words
-
-def prompt_guess():
-    """Asks user for guess and validates guess. 
+    while True:
+        is_evil = set_is_evil()
+        level = set_difficulty_level()
+        words = get_word_list(level)
         
-        guess = "a"
-        >>> prompt_guess("a")
-        >>> "oh noes only letters"
 
+        if is_evil == True:
+            # For the evil variant, the list of words all has to
+            # be the same length.
+            word_lens = [len(w) for w in words]
+            word_len = random.randint(min(word_lens), max(word_lens))
+            words = [w for w in words if len(w) == word_len]
 
-    """
-    
-    while True:    
-        guess = raw_input("Guess a letter: ")
-        raw_ltr = guess.strip().lower()
+        result = play_round(words, is_evil)
 
-        if not raw_ltr.isalpha():
-            print "oh noes only letters"
+        if result:
+            print "Congratulations!"
+
         else:
-            return raw_ltr
-
-def display_hangman(secret_word, guessed_letters):
-    """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters.
-
-    """
-
-    board = ""
-    for ltr in secret_word:
-        if ltr in guessed_letters:
-            board += ltr
-        else:
-            board += "_"
-
-    print " ".join(board)
-    print "You've guessed: " + " ".join(sorted(guessed_letters))
-
-
-def draw_gallows(guesses_remaining):
-    print GALLOWS[guesses_remaining]
+            print "Better luck next time!"
+ 
+        again = raw_input("Play again? [y/n]").lower()
+ 
+        if again.startswith("n") or again.startswith("q"):
+            print "Thanks for playing!"
+            return
+        
+        print "One hot new challenge coming up!"
 
 
 if __name__ == "__main__":
