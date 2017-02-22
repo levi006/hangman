@@ -14,7 +14,7 @@ def set_is_evil():
     else: 
         is_evil = False
         print "Vanilla it is!"
-        print is_evil
+
     return is_evil
 
 def set_difficulty_level():
@@ -72,7 +72,7 @@ def prompt_guess():
         raw_ltr = guess.strip().lower()
 
         if not raw_ltr.isalpha():
-            print "oh noes only letters"
+            print "Only enter letters, please."
         else:
             return raw_ltr
 
@@ -117,7 +117,7 @@ def play_round(words, is_evil):
             words = generate_word_bank(guessed_ltr, words)
             secret_word = random.choice(words)
 
-        # print "WORD BANK: %s %s" % (len(word_bank), word_bank)
+
         print "SECRET WORD " + secret_word
 
         guessed_letters.add(guessed_ltr)
