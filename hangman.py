@@ -82,6 +82,7 @@ def play_round(words, secret_word, is_evil=False):
             guesses_remaining -= 1
 
             if guesses_remaining == 0:
+                draw_gallows(guesses_remaining)
                 return False 
 
             if guesses_remaining == 1:
