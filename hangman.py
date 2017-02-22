@@ -60,9 +60,9 @@ def get_word_list(level):
 def prompt_guess():
     """Asks user for guess and validates guess. 
         
-        guess = "a"
-        >>> prompt_guess("a")
-        >>> "oh noes only letters"
+        guess = "3"
+        >>> prompt_guess()
+        >>> "Only enter letters, please."
 
 
     """
@@ -111,11 +111,11 @@ def play_round(words, is_evil):
             print "You've already guessed this letter. " + msg
             continue
 
-        # if evil, reduce our word list
+        # if evil, reduce word list
 
         if is_evil:
             words = generate_word_bank(guessed_ltr, words)
-            secret_word = random.choice(words)
+            secret_word = words[0]
 
 
         print "SECRET WORD " + secret_word
@@ -157,7 +157,7 @@ def generate_word_bank(guessed_ltr, words):
     and return it along with the newly-reduced word bank.
 
         >>> wb = ["can", "con", "non", "coy", "alf", "aaa"]
-        >>> switch_secret_word("n", wb)
+        >>> generate_word_bank("n", wb)
         ['coy', 'alf', 'aaa']
     """
 
@@ -174,7 +174,7 @@ def generate_word_bank(guessed_ltr, words):
     # find family with most words (eg ["can", "con"])
  
     words = max(word_families.values(), key=lambda fam: len(fam))
-    print("word_bank:", words)
+    # print("word_bank:", words)
  
     return words 
 
