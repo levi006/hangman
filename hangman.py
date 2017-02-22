@@ -11,18 +11,19 @@ def play():
         secret_word = random.choice(words)
         result = play_round(words, secret_word)
 
-        if result:
+        if not result:
 
             again = raw_input("Play again? [y/n]")
+        
             if again.lower().startswith("n" or "q"):
                 print "Thanks for playing!"
                 break
-        else:
-            print "One hot new challenge coming up!" 
+            else:
+                print "One hot new challenge coming up!" 
 
     return
 
-def play_round(words, secret_word, is_evil=True):
+def play_round(words, secret_word, is_evil=False):
     """Contains the game play logic and messaging as game progresses."""
     
     guesses_remaining = 6
@@ -118,17 +119,16 @@ def switch_secret_word(guessed_ltr, word_bank):
         indices = [i for i, ltr in enumerate(word) if ltr == guessed_ltr]
         
         # throw out words that include letter
-        if not indices: 
+        if indices: 
             continue
 
         # {(0, 2): ["non"], (2,): ["can", "con"]}
-        word_families[tuple(indices)].append(word)
-
+        indices_words = word_families[tuple(indices)].append(word)
+        print type(indices_words)
     # find family with most words (eg ["can", "con"])
     word_bank = max(word_families.values(), key=lambda fam: len(fam))
 
-    # word = random.choice(word_bank)
-    word = word_bank[0]
+    word = random.choice(word_bank)
 
     return (word, word_bank) 
 
