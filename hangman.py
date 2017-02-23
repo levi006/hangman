@@ -60,7 +60,7 @@ def draw_gallows(guesses_remaining):
     
     >>> guesses_remaining = 0
     >>> draw_gallows(guesses_remaining)
-    
+    <BLANKLINE>
      _______
     |   |  \|
         O   |
@@ -73,7 +73,7 @@ def draw_gallows(guesses_remaining):
 
     >>> guesses_remaining = 6
     >>> draw_gallows(guesses_remaining)
-    
+    <BLANKLINE>
      _______
     |      \|
             |
@@ -88,13 +88,7 @@ def draw_gallows(guesses_remaining):
     print GALLOWS[guesses_remaining] 
 
 def get_word_list(level):
-    """Choose difficulty level and get list of words from API for that level.
-    
-    >>> URL = {"can":{"difficulty": 3}, "non":{"difficulty":4}}
-    >>> get_word_list(3)
-    ["can"]
-
-    """
+    """Choose difficulty level and get list of words from API for that level."""
 
     params = {"difficulty": level}
     URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
@@ -147,9 +141,9 @@ def generate_word_bank(guessed_ltr, words):
 
 def play_round(words, is_evil):
     """Contains the game play logic and messaging as game progresses.
-    >>> words = ["can", "con", "non", "coy", "alf", "aaa"]
-    >>> is_evil = True
-    >>> play_round(words, is_evil)
+    # >>> words = ["can", "con", "non", "coy", "alf", "aaa"]
+    # >>> is_evil = True
+    # >>> play_round(words, is_evil)
 
     """
 
