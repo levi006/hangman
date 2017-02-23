@@ -23,6 +23,26 @@ Further details on Evil Hangman can be found [here](http://www.keithschwarz.com/
 
      `git clone https://github.com/levi006/hangman.git`
 
+1. Make sure you have pip (a package management system for Python) installed. If you need to install it, type:  
+
+     `sudo easy_install pip`
+
+1. Install the virtual environment tool:
+
+     `sudo pip install virtualenv`
+
+1. Create a virtual environment inside the working directory:
+
+     `virtualenv env`
+
+1. Source the environment:
+
+     `source env/bin/activate`
+
+1. Download the requirements:
+
+     `pip install -r requirements.txt`
+
 1. Run the file from your terminal:
 
      `python hangman.py`
