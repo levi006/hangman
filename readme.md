@@ -35,12 +35,16 @@ And you should have the game up and running!
 
 The first pass was a basic control flow for traditional hangman, and then I refactored the code into functions to avoid repetition. I ran into architectural issues when deciding what to designate as top level and helper functions, and what to designate as a helper function vs. folding it as a few lines of code in a higher level function. As I progressed, I began thinking an object oriented approach would be more elegant, especially as I was working on implementing the Evil Hangman variant--this would probably be a main focus for next steps.
 
+
+### Features
+
 The current version of the game has the following features:
-	* The length of the secret word is displayed to the guesser (e.g. as a set of underscores)
-	* As the guesser makes correct guesses, occurrences of the guessed letter in the word
+
+	1. The length of the secret word is displayed to the guesser (e.g. as a set of underscores)
+	1. As the guesser makes correct guesses, occurrences of the guessed letter in the word
 	are shown while unknown letters are still hidden
-	* The number of guesses remaining is displayed
-	* A list of incorrect guesses are displayed  
+	1. The number of guesses remaining is displayed
+	1. A list of incorrect guesses are displayed  
 
 The game also allows the user to select from 10 difficulty settings, and to guess an entire word at a time.  
  
