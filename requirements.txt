@@ -1,0 +1,10 @@
+appdirs==1.4.0
+coverage==4.3.4
+funcsigs==1.0.2
+MiniMock==1.2.8
+mock==2.0.0
+packaging==16.8
+pbr==1.10.0
+pyparsing==2.1.10
+requests==2.13.0
+six==1.10.0
