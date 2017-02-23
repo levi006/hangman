@@ -1,4 +1,4 @@
-# FlavorNet
+# Hangman
 
 ## Table of Contents
 - [Introduction](#introduction)
