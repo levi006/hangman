@@ -54,9 +54,13 @@ The game also allows the user to select from 10 difficulty settings, and to gues
 
 ### Evil Hangman
 
+This was the most interesting component of the game to code, and I needed to use a defaultdict data structure to keep track of which letters had been guessed (and not guessed) and at which index, in order to generate a new list of plausible word candidates that were 1) the same length as the previous secret word and 2) contained the same letters at the same indices (or blanks at the same indices) as the preceding secret word. 
+
+The logic for evil mode quickly outgrew the initial control flow I had originally scripted out, and figuring out when to insert the logic was a challenge for me. (Structuring the functions and overall code structure were the biggest challenges). I ended up breaking the game logic into a top level "play()" function and each guess was evaluated in a secondary "play_round()" function. If a player elects to play in evil mode, each guessed letter is passed to a function that generates a word bank and a secret word for the next turn. Letters are only revealed on the board when the word bank runs out of candidates for which it can switch the secret word.
+
 ## Next Steps
 
-Something to explore would be writing a function to play around with letter frequencies. Currently, each new secret word for an Evil Hangman turn is picked because it's the first in the generated word list (for larger word lists, random selection can take a few seconds). Instead of picking the first word in the work bank, we could preferentially weight the word candidates containing less commonly used letters like "j" or "q", making Evil Hangman slightly more difficult. Conversely, we could also give hints to the player by suggesting the mostly likely letters to yield a correct guess.  
+Something to explore would be writing a function to play around with letter frequencies. Currently, each new secret word for an Evil Hangman turn is picked because it's the first in the generated word list (for larger word lists, random selection can take a few seconds). Instead of picking the first word in the work bank, we could preferentially weight the word candidates containing less commonly used letters like "j" or "q", making Evil Hangman slightly more difficult. Conversely, we could also give helpful hints to the player by suggesting the mostly likely, or most frequently occuring letters, to yield a correct guess.  
 
 
 
