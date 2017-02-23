@@ -54,7 +54,7 @@ The game also allows the user to select from 10 difficulty settings, and to gues
 
 #### Evil Hangman
 
-## Next-Steps
+## Next Steps
 
 Something to explore would be writing a function to play around with letter frequencies. Currently, each new secret word for an Evil Hangman turn is picked because it's the first in the generated word list (for larger word lists, random selection can take a few seconds). Instead of picking the first word in the work bank, we could preferentially weight the word candidates containing less commonly used letters like "j" or "q", making Evil Hangman slightly more difficult. Conversely, we could also give hints to the player by suggesting the mostly likely letters to yield a correct guess.  
 
