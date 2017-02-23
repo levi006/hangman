@@ -88,12 +88,14 @@ def draw_gallows(guesses_remaining):
     print GALLOWS[guesses_remaining] 
 
 def get_word_list(level):
-    """Choose difficulty level and get list of words from API for that level."""
+    """Choose difficulty level and get list of words from API for that level.   """
 
     params = {"difficulty": level}
     URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
 
     response = requests.get(URL, params=params)
+        if no response:
+
     words = response.text.splitlines()
 
     return words
@@ -140,12 +142,7 @@ def generate_word_bank(guessed_ltr, words):
     return words 
 
 def play_round(words, is_evil):
-    """Contains the game play logic and messaging as game progresses.
-    # >>> words = ["can", "con", "non", "coy", "alf", "aaa"]
-    # >>> is_evil = True
-    # >>> play_round(words, is_evil)
-
-    """
+    """Contains the game play logic and messaging as game progresses."""
 
     secret_word = random.choice(words)
     
@@ -168,6 +165,7 @@ def play_round(words, is_evil):
 
         elif len(guessed_ltr) != 1:
             print "That wasn't the secret word. Try entering one letter at a time if you're not sure what the word is."
+            guesses_remaining -= 1
             continue
 
         if guessed_ltr in guessed_letters:
