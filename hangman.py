@@ -94,8 +94,8 @@ def get_word_list(level):
     URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
 
     response = requests.get(URL, params=params)
-        if no response:
-
+    # if not response:
+    #     pass 
     words = response.text.splitlines()
 
     return words
@@ -166,14 +166,15 @@ def play_round(words, is_evil):
         elif len(guessed_ltr) != 1:
             print "That wasn't the secret word. Try entering one letter at a time if you're not sure what the word is."
             guesses_remaining -= 1
+            msg = "You have %d guesses left." % guesses_remaining
+            print "You've already guessed this letter. " + msg
             continue
 
         if guessed_ltr in guessed_letters:
             if guesses_remaining == 1:
                 msg = "You still have one guess left."
-            else:
-                msg = "You have %d guesses left." % guesses_remaining
-            print "You've already guessed this letter. " + msg
+            else:   
+                print "You've already guessed this letter. " + msg
             continue
 
         # if evil, reduce word list
