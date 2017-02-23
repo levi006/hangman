@@ -19,6 +19,8 @@ Further details on Evil Hangman can be found [here](http://www.keithschwarz.com/
 
 1. Make sure you have Python installed (if you're on a Mac, Python should already be installed).
 
+	1. Also, the words are generated from an API, so you'll need to be connected to the internet to play. 
+
 1. Clone or download the git repo at: "https://github.com/levi006/hangman".
 
      `git clone https://github.com/levi006/hangman.git`
