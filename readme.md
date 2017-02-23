@@ -12,7 +12,7 @@ This is a Python version of Hangman that is run from the command line. Users hav
 
 In traditional hangman, the secret word is fixed for the entirety of the game, and never changes. The "evil hangman" variant is where the computer cheats by switching the secret word every time the user guesses a letter. Since the secret word(s) still match the revealed letters and blank spaces on the board, the user experience is identical to a traditional game of hangman, but winning is much more difficult. By maintaining a list of possible secret words and continually paring down the list of candidates as the user guesses each letter, the computer delays committing to a fixed secret word until there are no other possibilities. 
 
-Further details on Evil Hangman can be found [here](http://www.keithschwarz.com/cs106l/spring2010/handouts/020_Assignment_1_Evil_Hangman.pdf). 
+Further details on Evil Hangman can be found [here](http://www.keithschwarz.com/cs106l/spring2010/handouts/020_Assignment_1_Evil_Hangman.pdf), via Keith Schwarz. 
 
 ## Installation
 
