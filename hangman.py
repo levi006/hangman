@@ -13,7 +13,7 @@ def set_is_evil():
         print "Evil mode on! MUAHAHA!"
     else: 
         is_evil = False
-        print "Vanilla it is!"
+        print "Vanilla Hangman it is!"
 
     return is_evil
 
@@ -21,7 +21,7 @@ def set_difficulty_level():
     """Choose difficulty level and get list of words from API for that level."""
 
     while True:    
-        level = raw_input('Select the difficulty level (1=easiest to 10=hardest)')
+        level = raw_input('Select the difficulty level (1=easiest to 10=hardest): ')
 
         if level.isdigit() and 1 <= int(level) <= 10:
             return int(level)
@@ -30,6 +30,18 @@ def set_difficulty_level():
 
 def display_hangman(secret_word, guessed_letters):
     """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters.
+    
+    >>> secret_word = "cat"
+    >>> guessed_letters = "c"
+    >>> display_hangman(secret_word, guessed_letters)
+    c _ _
+    You've guessed: c
+
+    >>> secret_word = "dog"
+    >>> guessed_letters = "e","s"
+    >>> display_hangman(secret_word, guessed_letters)
+    _ _ _
+    You've guessed: e s
 
     """
 
@@ -44,10 +56,45 @@ def display_hangman(secret_word, guessed_letters):
     print "You've guessed: " + " ".join(sorted(guessed_letters))
 
 def draw_gallows(guesses_remaining):
+    """Prints corresponding ASCII art with each turn.
+    
+    >>> guesses_remaining = 0
+    >>> draw_gallows(guesses_remaining)
+    
+     _______
+    |   |  \|
+        O   |
+       \|/  |
+        |   |
+       / \  |
+            |
+            |
+           ---
+
+    >>> guesses_remaining = 6
+    >>> draw_gallows(guesses_remaining)
+    
+     _______
+    |      \|
+            |
+            |
+            |
+            |
+            |
+            |
+           ---
+    """
+
     print GALLOWS[guesses_remaining] 
 
 def get_word_list(level):
-    """Choose difficulty level and get list of words from API for that level."""
+    """Choose difficulty level and get list of words from API for that level.
+    
+    >>> URL = {"can":{"difficulty": 3}, "non":{"difficulty":4}}
+    >>> get_word_list(3)
+    ["can"]
+
+    """
 
     params = {"difficulty": level}
     URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
@@ -58,14 +105,7 @@ def get_word_list(level):
     return words
 
 def prompt_guess():
-    """Asks user for guess and validates guess. 
-        
-        guess = "3"
-        >>> prompt_guess()
-        >>> "Only enter letters, please."
-
-
-    """
+    """Asks user for guess and validates guess."""
     
     while True:    
         guess = raw_input("Guess a letter: ")
@@ -76,8 +116,42 @@ def prompt_guess():
         else:
             return raw_ltr
 
+def generate_word_bank(guessed_ltr, words):
+    """Builds a new word bank based on a guessed letter each turn. 
+
+    Given a word bank of possible words, find the list of words that include the guessed letter
+    and which have the longest-set of matching locations of the letter. Choose one randomly
+    and return it along with the newly-reduced word bank.
+
+        >>> word_bank = ["can", "con", "non", "coy", "alf", "aaa"]
+        >>> generate_word_bank("n", word_bank)
+        ['coy', 'alf', 'aaa']
+    """
+
+    word_families = defaultdict(list)
+
+    for word in words:
+
+        # find locations of guessed letter in word
+        indices = [i for i, ltr in enumerate(word) if ltr == guessed_ltr]
+        
+        # {(0, 2): ["non"], (2,): ["can", "con"]}
+        indices_words = word_families[tuple(indices)].append(word)
+
+    # find family with most words (eg ["can", "con"])
+    words = max(word_families.values(), key=lambda fam: len(fam))
+    
+    # print("word_bank:", words)
+ 
+    return words 
+
 def play_round(words, is_evil):
-    """Contains the game play logic and messaging as game progresses."""
+    """Contains the game play logic and messaging as game progresses.
+    >>> words = ["can", "con", "non", "coy", "alf", "aaa"]
+    >>> is_evil = True
+    >>> play_round(words, is_evil)
+
+    """
 
     secret_word = random.choice(words)
     
@@ -145,35 +219,6 @@ def play_round(words, is_evil):
 
         display_hangman(secret_word, guessed_letters)
    
-def generate_word_bank(guessed_ltr, words):
-    """Builds a new word bank based on a guessed letter each turn. 
-
-    Given a word bank of possible words, find the list of words that include the guessed letter
-    and which have the longest-set of matching locations of the letter. Choose one randomly
-    and return it along with the newly-reduced word bank.
-
-        >>> wb = ["can", "con", "non", "coy", "alf", "aaa"]
-        >>> generate_word_bank("n", wb)
-        ['coy', 'alf', 'aaa']
-    """
-
-    word_families = defaultdict(list)
-
-    for word in words:
-
-        # find locations of guessed letter in word
-        indices = [i for i, ltr in enumerate(word) if ltr == guessed_ltr]
-        
-        # {(0, 2): ["non"], (2,): ["can", "con"]}
-        indices_words = word_families[tuple(indices)].append(word)
-
-    # find family with most words (eg ["can", "con"])
- 
-    words = max(word_families.values(), key=lambda fam: len(fam))
-    # print("word_bank:", words)
- 
-    return words 
-
 def play():
     """Lays out the general game sequence and resets a new game."""
 
