@@ -4,6 +4,7 @@
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Extensions](#extensions)
+- [Next Steps](#next-steps)
  
 
 ## Introduction
@@ -49,11 +50,13 @@ are shown while unknown letters are still hidden
 
 1. A list of incorrect guesses are displayed  
 
-The game also allows the user to select from 10 difficulty settings, and to guess an entire word at a time.  
- 
+The game also allows the user to select from 10 difficulty settings, and to guess an entire word at a time.   
 
 #### Evil Hangman
 
+## Next-Steps
+
+Something to explore would be writing a function to play around with letter frequencies. Currently, each new secret word for an Evil Hangman turn is picked because it's the first in the generated word list (for larger word lists, random selection can take a few seconds). Instead of picking the first word in the work bank, we could preferentially weight the word candidates containing less commonly used letters like "j" or "q", making Evil Hangman slightly more difficult. Conversely, we could also give hints to the player by suggesting the mostly likely letters to yield a correct guess.  
 
 
 
