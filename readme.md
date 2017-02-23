@@ -32,7 +32,7 @@ And you should have the game up and running!
 
 ## Extensions 
 
-#### Initial Implementation
+### Initial Implementation
 
 The first pass was a basic control flow for traditional hangman, and then I refactored the code into functions to avoid repetition. I ran into architectural issues when deciding what to designate as top level and helper functions, and what to designate as a helper function vs. folding it as a few lines of code in a higher level function. As I progressed, I began thinking an object oriented approach would be more elegant, especially as I was working on implementing the Evil Hangman variant--this would probably be a main focus for next steps.
 
@@ -52,7 +52,7 @@ are shown while unknown letters are still hidden
 
 The game also allows the user to select from 10 difficulty settings, and to guess an entire word at a time.   
 
-#### Evil Hangman
+### Evil Hangman
 
 ## Next Steps
 
