@@ -21,7 +21,7 @@ Further details on Evil Hangman can be found [here](http://www.keithschwarz.com/
 
 1. Clone or download the git repo at: "https://github.com/levi006/hangman".
 
-     `git clone https://github.com/levi006/hangman`
+     `git clone https://github.com/levi006/hangman.git`
 
 1. Run the file from your terminal:
 
