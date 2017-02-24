@@ -4,40 +4,48 @@ from gallows import GALLOWS
 
 
 def set_is_evil():
-    """Choose difficulty level and get list of words from API for that level."""
+    """Choose difficulty level and get list of words from API for that level.
+    
+        >>> __builtins__['raw_input'] = lambda msg: "y"
+        >>> set_is_evil()
+        Evil mode on! MUAHAHA!
+        True
+
+        >>> __builtins__['raw_input'] = lambda msg: "n"
+        >>> set_is_evil()
+        Vanilla Hangman it is!
+        False
+
+    """
    
-    answer = str(raw_input('Would you like to play on evil mode?[y/n]')).lower().strip()
+    while True:
+        answer = str(raw_input('Would you like to play on evil mode?[y/n]')).lower().strip()
 
-    if answer == 'y':
-        is_evil = True
-        print "Evil mode on! MUAHAHA!"
-    elif answer == 'n':
-        is_evil = False
-        print "Vanilla Hangman it is!"
-    else:
-        print "Please enter 'y' or 'n'."
-        return set_is_evil()
-    return is_evil
-
-
-    reply = str(raw_input(question+' (y/n): ')).lower().strip()
-    if reply[0] == 'y':
-        return True
-    if reply[0] == 'n':
-        return False
-    else:
-        return yes_or_no("Uhhhh... please enter ")
+        if answer == 'y':
+            print "Evil mode on! MUAHAHA!"
+            return True
+        elif answer == 'n':
+            print "Vanilla Hangman it is!"
+            return False
+        else:
+            print "Please enter 'y' or 'n'."
 
 def set_difficulty_level():
-    """Choose difficulty level and get list of words from API for that level."""
+    """Choose difficulty level and get list of words from API for that level.
+        
+        >>> __builtins__['raw_input'] = lambda msg: "3"
+        >>> set_difficulty_level()
+        3
+
+    """
 
     while True:    
         level = raw_input('Select the difficulty level (1=easiest to 10=hardest): ')
 
         if level.isdigit() and 1 <= int(level) <= 10:
             return int(level)
-
-        print "Only integers from 1-10 please!"
+        else:    
+            print "Only integers from 1-10 please!"
 
 def display_hangman(secret_word, guessed_letters):
     """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters.
@@ -53,6 +61,12 @@ def display_hangman(secret_word, guessed_letters):
     >>> display_hangman(secret_word, guessed_letters)
     _ _ _
     You've guessed: e s
+
+    >>> secret_word = "mat"
+    >>> guessed_letters = "m","t", "a"
+    >>> display_hangman(secret_word, guessed_letters)
+    m a t
+    You've guessed: a m t
 
     """
 
@@ -99,18 +113,12 @@ def draw_gallows(guesses_remaining):
     print GALLOWS[guesses_remaining] 
 
 def get_word_list(level):
-    """Choose difficulty level and get list of words from API for that level.   """
+    """Choose difficulty level and get list of words from API for that level."""
 
     params = {"difficulty": level}
     URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
 
     response = requests.get(URL, params=params)
-    # print response.raise_for_status()
-
-    if response.status_code == 200:
-        print "No response!"
-        # URL = 'localhost:5000/'
-
     
     words = response.text.splitlines()
 
