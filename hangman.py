@@ -6,16 +6,27 @@ from gallows import GALLOWS
 def set_is_evil():
     """Choose difficulty level and get list of words from API for that level."""
    
-    answer = raw_input('Would you like to play on evil mode?[y/n]')
+    answer = str(raw_input('Would you like to play on evil mode?[y/n]')).lower().strip()
 
     if answer == 'y':
         is_evil = True
         print "Evil mode on! MUAHAHA!"
-    else: 
+    elif answer == 'n':
         is_evil = False
         print "Vanilla Hangman it is!"
-
+    else:
+        print "Please enter 'y' or 'n'."
+        return set_is_evil()
     return is_evil
+
+
+    reply = str(raw_input(question+' (y/n): ')).lower().strip()
+    if reply[0] == 'y':
+        return True
+    if reply[0] == 'n':
+        return False
+    else:
+        return yes_or_no("Uhhhh... please enter ")
 
 def set_difficulty_level():
     """Choose difficulty level and get list of words from API for that level."""
@@ -94,8 +105,13 @@ def get_word_list(level):
     URL = 'http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words'
 
     response = requests.get(URL, params=params)
-    # if not response:
-    #     pass 
+    # print response.raise_for_status()
+
+    if response.status_code == 200:
+        print "No response!"
+        # URL = 'localhost:5000/'
+
+    
     words = response.text.splitlines()
 
     return words
