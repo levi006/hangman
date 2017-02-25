@@ -157,19 +157,6 @@ def prompt_guess(guesses_remaining):
         left -= 1
 
     return None
-        
-    # displays timer
-    # time_start = time.time()
-    # seconds = 0
-
-    # while True:
-    #     try:
-    #         sys.stdout.write("\r{seconds}s have passed.".format(seconds=seconds))
-    #         sys.stdout.flush()
-    #         time.sleep(1)
-    #         seconds = int(time.time() - time_start)
-    #     except KeyboardInterrupt, e:
-    #         break
             
     guess = raw_input("\nGuess a letter: ")
     raw_ltr = guess.strip().lower()
