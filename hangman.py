@@ -140,7 +140,7 @@ def get_word_list(level):
     return words
 
 
-def prompt_guess(guesses_remaining):
+def prompt_guess():
     """Asks user for guess and validates guess."""
 
     left = 10
