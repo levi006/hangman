@@ -140,13 +140,13 @@ def get_word_list(level):
     return words
 
 
-def prompt_guess():
+def prompt_guess(guesses_remaining):
     """Asks user for guess and validates guess."""
 
     left = 10
 
     while left:
-        print "\r You have ten seconds to answer! %ss " % left,
+        print "\rYou have ten seconds to answer: %ss " % left,
         sys.stdout.flush()
 
         stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
@@ -228,10 +228,15 @@ def play_round(words, is_evil):
 
         # Validate input
 
+        elif guessed_ltr == None:
+            guesses_remaining -= 1
+            msg = "You have %d guesses left." % guesses_remaining
+            print "\nTime's up! You now have %d guesses left." % guesses_remaining
+            continue
+
         elif len(guessed_ltr) != 1:
             print "That wasn't the secret word. Try entering one letter at a time if you're not sure what the word is."
             guesses_remaining -= 1
-            msg = "You have %d guesses left." % guesses_remaining
             print "You've already guessed this letter. " + msg
             continue
 
