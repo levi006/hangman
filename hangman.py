@@ -167,7 +167,6 @@ def prompt_guess(timer, guesses_remaining):
                 print "Only enter letters, please."
             else:
                 return raw_ltr
-
     if timer:
         while True:
             left = 10
@@ -175,16 +174,13 @@ def prompt_guess(timer, guesses_remaining):
             while left:
                 print "\rYou have ten seconds to guess: %ss " % left,
                 sys.stdout.flush()
-         
                 stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
 
                 if stdin_ready:
-
                     raw_ltr = raw_input().strip().lower()
 
                     if not raw_ltr.isalpha():
                         print "Only enter letters, please."
-                    
                     else:
                         return raw_ltr 
                 
