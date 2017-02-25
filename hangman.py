@@ -1,25 +1,33 @@
+"""Evil Hangman."""
+
 import random, requests
 from collections import defaultdict
+
 from gallows import GALLOWS
 
 
 def set_is_evil():
     """Choose difficulty level and get list of words from API for that level.
-    
-        >>> __builtins__['raw_input'] = lambda msg: "y"
+
+        >>> from testutils import test_input
+
+        >>> test_input("maybe", "y")
+
         >>> set_is_evil()
-        Evil mode on! MUAHAHA!
+        Would you like to play on evil mode? [y/n] Please enter 'y' or 'n'.
+        Would you like to play on evil mode? [y/n] Evil mode on! MUAHAHA!
         True
 
-        >>> __builtins__['raw_input'] = lambda msg: "n"
-        >>> set_is_evil()
-        Vanilla Hangman it is!
-        False
+        >>> test_input("n")
 
+        >>> set_is_evil()
+        Would you like to play on evil mode? [y/n] Vanilla Hangman it is!
+        False
     """
-   
+
     while True:
-        answer = str(raw_input('Would you like to play on evil mode?[y/n]')).lower().strip()
+        answer = str(raw_input('Would you like to play on evil mode? [y/n] ')).lower().strip()
+
 
         if answer == 'y':
             print "Evil mode on! MUAHAHA!"
@@ -30,13 +38,18 @@ def set_is_evil():
         else:
             print "Please enter 'y' or 'n'."
 
+
 def set_difficulty_level():
     """Choose difficulty level and get list of words from API for that level.
         
-        >>> __builtins__['raw_input'] = lambda msg: "3"
+        >>> from testutils import test_input
+        
+        >>> test_input("frog", "11", "3")
+        
         >>> set_difficulty_level()
-        3
-
+        Select the difficulty level (1=easiest to 10=hardest): Only integers from 1-10 please!
+        Select the difficulty level (1=easiest to 10=hardest): Only integers from 1-10 please!
+        Select the difficulty level (1=easiest to 10=hardest): 3
     """
 
     while True:    
@@ -46,6 +59,7 @@ def set_difficulty_level():
             return int(level)
         else:    
             print "Only integers from 1-10 please!"
+
 
 def display_hangman(secret_word, guessed_letters):
     """Updates board with filled and empty dashes for the secret word and displays a running list of incorrectly guessed letters.
@@ -80,6 +94,7 @@ def display_hangman(secret_word, guessed_letters):
     print " ".join(board)
     print "You've guessed: " + " ".join(sorted(guessed_letters))
 
+
 def draw_gallows(guesses_remaining):
     """Prints corresponding ASCII art with each turn.
     
@@ -112,6 +127,7 @@ def draw_gallows(guesses_remaining):
 
     print GALLOWS[guesses_remaining] 
 
+
 def get_word_list(level):
     """Choose difficulty level and get list of words from API for that level."""
 
@@ -124,17 +140,35 @@ def get_word_list(level):
 
     return words
 
-def prompt_guess():
+
+def prompt_guess(guesses_remaining):
     """Asks user for guess and validates guess."""
-    
+    time = 60
+
     while True:    
         guess = raw_input("Guess a letter: ")
+        
         raw_ltr = guess.strip().lower()
 
         if not raw_ltr.isalpha():
             print "Only enter letters, please."
         else:
-            return raw_ltr
+            continue 
+        #delete entirely, to return raw_ltr and guesses_remaining on same line
+
+        # time runs out for a guess or time runs out on last guess 
+        if time == timeout:
+            if guesses_remaining >= 1:
+                guesses_remaining =- 1  
+                print "You lost a guess, hurry up!"
+                return False
+            else:
+                print "You've run out of time!"
+                return False
+
+    return guesses_remaining, raw_ltr
+        
+            
 
 def generate_word_bank(guessed_ltr, words):
     """Builds a new word bank based on a guessed letter each turn. 
@@ -143,9 +177,15 @@ def generate_word_bank(guessed_ltr, words):
     and which have the longest-set of matching locations of the letter. Choose one randomly
     and return it along with the newly-reduced word bank.
 
-        >>> word_bank = ["can", "con", "non", "coy", "alf", "aaa"]
-        >>> generate_word_bank("n", word_bank)
-        ['coy', 'alf', 'aaa']
+    Evil use cases:
+
+        # >>> word_bank = ["can", "con", "non", "coy", "alf", "aaa"]
+        # >>> generate_word_bank("n", word_bank)
+        # ['coy', 'alf', 'aaa']
+
+        >>> word_bank = ["can", "con", "non"]
+        >>> generate_word_bank("c", word_bank)
+        ['non']
     """
 
     word_families = defaultdict(list)
@@ -154,19 +194,23 @@ def generate_word_bank(guessed_ltr, words):
 
         # find locations of guessed letter in word
         indices = [i for i, ltr in enumerate(word) if ltr == guessed_ltr]
-        
+
         # {(0, 2): ["non"], (2,): ["can", "con"]}
         indices_words = word_families[tuple(indices)].append(word)
 
     # find family with most words (eg ["can", "con"])
     words = max(word_families.values(), key=lambda fam: len(fam))
-    
+
     # print("word_bank:", words)
  
     return words 
 
+
 def play_round(words, is_evil):
-    """Contains the game play logic and messaging as game progresses."""
+    """Contains the game play logic and messaging as game progresses.
+
+    For tests of this function, see tests.txt.
+    """
 
     secret_word = random.choice(words)
     
@@ -178,7 +222,8 @@ def play_round(words, is_evil):
 
     while True:
 
-        guessed_ltr = prompt_guess()
+        guessed_ltr = prompt_guess(guesses_remaining)
+
 
         if guessed_ltr == secret_word:
             print "Didn't need all the guesses, did you?"
@@ -195,10 +240,16 @@ def play_round(words, is_evil):
             continue
 
         if guessed_ltr in guessed_letters:
+            # msg = "You still have one guess left." if guesses_remaining == 1 else ""
+            # print "You've already guessed this letter. " + msg
+            # continue
+
             if guesses_remaining == 1:
                 msg = "You still have one guess left."
-            else:   
-                print "You've already guessed this letter. " + msg
+            else:
+                msg = ""
+              
+            print "You've already guessed this letter. " + msg
             continue
 
         # if evil, reduce word list
@@ -214,6 +265,8 @@ def play_round(words, is_evil):
         if guessed_ltr in secret_word:
             print "Correct!"
             if not(set(secret_word) - guessed_letters):
+            # if all(c in guessed_letter for c in secret_word):
+
                 # They have guessed every correct letter
                 print "Hooray! You've won! The secret word was '%s'." % secret_word
                 return True
@@ -236,6 +289,7 @@ def play_round(words, is_evil):
 
         display_hangman(secret_word, guessed_letters)
    
+
 def play():
     """Lays out the general game sequence and resets a new game."""
 
