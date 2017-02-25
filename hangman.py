@@ -158,37 +158,39 @@ def get_word_list(level):
 def prompt_guess(timer, guesses_remaining):
     """Asks user for guess and validates guess."""
 
-    if timer == False:    
-        guess = raw_input("Guess a letter: ")
-        raw_ltr = guess.strip().lower()
+    if not timer:
+        while True:
+            guess = raw_input("Guess a letter: ")
+            raw_ltr = guess.strip().lower()
 
-        if not raw_ltr.isalpha():
-            print "Only enter letters, please."
-        else:
-            return raw_ltr
+            if not raw_ltr.isalpha():
+                print "Only enter letters, please."
+            else:
+                return raw_ltr
 
-    if timer == True:
-        left = 10
+    if timer:
+        while True:
+            left = 10
 
-        while left:
-            print "\rYou have ten seconds to guess: %ss " % left,
-            sys.stdout.flush()
-     
-            stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
+            while left:
+                print "\rYou have ten seconds to guess: %ss " % left,
+                sys.stdout.flush()
+         
+                stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
 
-            if stdin_ready:
+                if stdin_ready:
 
-                raw_ltr = raw_input().strip().lower()
+                    raw_ltr = raw_input().strip().lower()
 
-                if not raw_ltr.isalpha():
-                    print "Only enter letters, please."
+                    if not raw_ltr.isalpha():
+                        print "Only enter letters, please."
+                    
+                    else:
+                        return raw_ltr 
                 
-                else:
-                    return raw_ltr 
+                left -= 1  
             
-            left -= 1  
-        
-        return None               
+            return None               
                 
 def generate_word_bank(guessed_ltr, words):
     """Builds a new word bank based on a guessed letter each turn. 
@@ -268,8 +270,9 @@ def play_round(words, is_evil, timer):
             if guesses_remaining == 1:
                 print "You still have one guess left."  
             else:
-                print "You've already guessed this letter." + msg         
-            continue
+                msg = "You have %d guesses left." % guesses_remaining
+                print "You've already guessed this letter." + msg
+            continue    
 
         # if evil, reduce word list
 
