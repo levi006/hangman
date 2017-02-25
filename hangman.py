@@ -1,9 +1,9 @@
 """Evil Hangman."""
 
-import random, requests
+import random, requests, sys, time
 from collections import defaultdict
-
 from gallows import GALLOWS
+
 
 
 def set_is_evil():
@@ -127,7 +127,6 @@ def draw_gallows(guesses_remaining):
 
     print GALLOWS[guesses_remaining] 
 
-
 def get_word_list(level):
     """Choose difficulty level and get list of words from API for that level."""
 
@@ -143,32 +142,43 @@ def get_word_list(level):
 
 def prompt_guess(guesses_remaining):
     """Asks user for guess and validates guess."""
-    time = 60
 
-    while True:    
-        guess = raw_input("Guess a letter: ")
-        
+    time_start = time.time()
+    seconds = 0
+
+    while True:
+        sys.stdout.write("\r{seconds}s have passed.".format(seconds=seconds))
+        sys.stdout.flush()
+        time.sleep(1)
+        seconds = int(time.time() - time_start)
+
+    while True:
+        guess = raw_input("\nGuess a letter: ")
         raw_ltr = guess.strip().lower()
 
         if not raw_ltr.isalpha():
             print "Only enter letters, please."
         else:
-            continue 
-        #delete entirely, to return raw_ltr and guesses_remaining on same line
+            return raw_ltr
+
 
         # time runs out for a guess or time runs out on last guess 
-        if time == timeout:
-            if guesses_remaining >= 1:
-                guesses_remaining =- 1  
-                print "You lost a guess, hurry up!"
-                return False
-            else:
-                print "You've run out of time!"
-                return False
+        if seconds > 10:
+                guesses_remaining =- 1
+                print "guesses_remaining: " + str(guesses_remaining) 
+                
+                if guesses_remaining >= 1: 
+                    print "You lost a guess, hurry up!"
+                else:
+                    print "You've run out of time!"
+                    return False      
+                
 
-    return guesses_remaining, raw_ltr
+
         
-            
+
+        
+                  
 
 def generate_word_bank(guessed_ltr, words):
     """Builds a new word bank based on a guessed letter each turn. 
