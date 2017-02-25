@@ -1,6 +1,6 @@
 """Evil Hangman."""
 
-import random, requests, sys, time
+import random, requests, sys, time, select
 from collections import defaultdict
 from gallows import GALLOWS
 
@@ -143,43 +143,42 @@ def get_word_list(level):
 def prompt_guess(guesses_remaining):
     """Asks user for guess and validates guess."""
 
-    time_start = time.time()
-    seconds = 0
+    left = 10
 
-    while True:
-        sys.stdout.write("\r{seconds}s have passed.".format(seconds=seconds))
+    while left:
+        print "\r You have ten seconds to answer! %ss " % left,
         sys.stdout.flush()
-        time.sleep(1)
-        seconds = int(time.time() - time_start)
 
-    while True:
-        guess = raw_input("\nGuess a letter: ")
-        raw_ltr = guess.strip().lower()
+        stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
 
-        if not raw_ltr.isalpha():
-            print "Only enter letters, please."
-        else:
-            return raw_ltr
-
-
-        # time runs out for a guess or time runs out on last guess 
-        if seconds > 10:
-                guesses_remaining =- 1
-                print "guesses_remaining: " + str(guesses_remaining) 
-                
-                if guesses_remaining >= 1: 
-                    print "You lost a guess, hurry up!"
-                else:
-                    print "You've run out of time!"
-                    return False      
-                
-
-
+        if stdin_ready:
+            return raw_input()
         
+        left -= 1
 
+    return None
         
-                  
+    # displays timer
+    # time_start = time.time()
+    # seconds = 0
 
+    # while True:
+    #     try:
+    #         sys.stdout.write("\r{seconds}s have passed.".format(seconds=seconds))
+    #         sys.stdout.flush()
+    #         time.sleep(1)
+    #         seconds = int(time.time() - time_start)
+    #     except KeyboardInterrupt, e:
+    #         break
+            
+    guess = raw_input("\nGuess a letter: ")
+    raw_ltr = guess.strip().lower()
+
+    if not raw_ltr.isalpha():
+        print "Only enter letters, please."
+    else:
+        return raw_ltr    
+                
 def generate_word_bank(guessed_ltr, words):
     """Builds a new word bank based on a guessed letter each turn. 
 
