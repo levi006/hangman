@@ -181,7 +181,7 @@ def generate_word_bank(guessed_ltr, words):
 
         >>> word_bank = ["can", "con", "non"]
         >>> generate_word_bank("c", word_bank)
-        ['non']
+        ['can', 'con']
     """
 
     word_families = defaultdict(list)
