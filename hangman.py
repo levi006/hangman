@@ -253,6 +253,10 @@ def play_round(words, is_evil, timer):
         elif guessed_ltr == None:
             guesses_remaining -= 1
             print "\nTime's up! You now have %d guesses left." % guesses_remaining
+            if guesses_remaining == 0:
+                draw_gallows(guesses_remaining)
+                print "The gallows for you! The answer was '%s'." % secret_word
+                return False
             continue
 
         if len(guessed_ltr) != 1:
