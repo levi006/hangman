@@ -254,7 +254,6 @@ def play_round(words, is_evil, timer):
 
         elif guessed_ltr == None:
             guesses_remaining -= 1
-            msg = "You have %d guesses left." % guesses_remaining
             print "\nTime's up! You now have %d guesses left." % guesses_remaining
             continue
 
@@ -269,7 +268,6 @@ def play_round(words, is_evil, timer):
             if guesses_remaining == 1:
                 print "You still have one guess left."  
             else:
-
                 print "You've already guessed this letter." + msg         
             continue
 
