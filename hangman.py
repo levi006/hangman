@@ -149,6 +149,7 @@ def prompt_guess(guesses_remaining):
         print "\rYou have ten seconds to answer: %ss " % left,
         sys.stdout.flush()
 
+        # 
         stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
 
         if stdin_ready:
