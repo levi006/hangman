@@ -5,6 +5,21 @@ from collections import defaultdict
 from gallows import GALLOWS
 
 
+def set_timer():
+    """Choose whether to play with timed guesses"."""
+
+    while True:
+        answer = str(raw_input('Would you like use timed guesses? [y/n] ')).lower().strip()
+
+
+        if answer == 'y':
+            print "You have 10 seconds per guess."
+            return True
+        elif answer == 'n':
+            print "Who needs the extra stress?"
+            return False
+        else:
+            print "Please enter 'y' or 'n'."
 
 def set_is_evil():
     """Choose difficulty level and get list of words from API for that level.
@@ -140,31 +155,40 @@ def get_word_list(level):
     return words
 
 
-def prompt_guess(guesses_remaining):
+def prompt_guess(timer, guesses_remaining):
     """Asks user for guess and validates guess."""
 
-    left = 10
+    if timer == False:    
+        guess = raw_input("Guess a letter: ")
+        raw_ltr = guess.strip().lower()
 
-    while left:
-        print "\rYou have ten seconds to answer: %ss " % left,
-        sys.stdout.flush()
+        if not raw_ltr.isalpha():
+            print "Only enter letters, please."
+        else:
+            return raw_ltr
 
-        stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
+    if timer == True:
+        left = 10
 
-        if stdin_ready:
-            return raw_input()
-        
-        left -= 1
+        while left:
+            print "\rYou have ten seconds to guess: %ss " % left,
+            sys.stdout.flush()
+     
+            stdin_ready, _, _ = select.select([sys.stdin], [], [], 1)
 
-    return None
+            if stdin_ready:
+
+                raw_ltr = raw_input().strip().lower()
+
+                if not raw_ltr.isalpha():
+                    print "Only enter letters, please."
+                
+                else:
+                    return raw_ltr 
             
-    guess = raw_input("\nGuess a letter: ")
-    raw_ltr = guess.strip().lower()
-
-    if not raw_ltr.isalpha():
-        print "Only enter letters, please."
-    else:
-        return raw_ltr    
+            left -= 1  
+        
+        return None               
                 
 def generate_word_bank(guessed_ltr, words):
     """Builds a new word bank based on a guessed letter each turn. 
@@ -202,7 +226,7 @@ def generate_word_bank(guessed_ltr, words):
     return words 
 
 
-def play_round(words, is_evil):
+def play_round(words, is_evil, timer):
     """Contains the game play logic and messaging as game progresses.
 
     For tests of this function, see tests.txt.
@@ -218,7 +242,7 @@ def play_round(words, is_evil):
 
     while True:
 
-        guessed_ltr = prompt_guess(guesses_remaining)
+        guessed_ltr = prompt_guess(timer, guesses_remaining)
 
 
         if guessed_ltr == secret_word:
@@ -234,23 +258,19 @@ def play_round(words, is_evil):
             print "\nTime's up! You now have %d guesses left." % guesses_remaining
             continue
 
-        elif len(guessed_ltr) != 1:
+        if len(guessed_ltr) != 1:
             print "That wasn't the secret word. Try entering one letter at a time if you're not sure what the word is."
             guesses_remaining -= 1
-            print "You've already guessed this letter. " + msg
+            msg = "You have %d guesses left." % guesses_remaining
+            print msg
             continue
 
         if guessed_ltr in guessed_letters:
-            # msg = "You still have one guess left." if guesses_remaining == 1 else ""
-            # print "You've already guessed this letter. " + msg
-            # continue
-
             if guesses_remaining == 1:
-                msg = "You still have one guess left."
+                print "You still have one guess left."  
             else:
-                msg = ""
-              
-            print "You've already guessed this letter. " + msg
+                msg = "You have %d guesses left." % guesses_remaining
+                print "You've already guessed this letter." + msg         
             continue
 
         # if evil, reduce word list
@@ -283,11 +303,10 @@ def play_round(words, is_evil):
             if guesses_remaining == 1:
                 msg = "Only one guess left! Make it count!"
             else:
-                msg = "Yikes! You now have %s guesses left." % guesses_remaining
-
+                msg = "You now have %s guesses left." % guesses_remaining
             print msg
-            draw_gallows(guesses_remaining)
 
+            draw_gallows(guesses_remaining)
         display_hangman(secret_word, guessed_letters)
    
 
@@ -298,6 +317,7 @@ def play():
 
     while True:
         is_evil = set_is_evil()
+        timer = set_timer()
         level = set_difficulty_level()
         words = get_word_list(level)
         
@@ -309,7 +329,7 @@ def play():
             word_len = random.randint(min(word_lens), max(word_lens))
             words = [w for w in words if len(w) == word_len]
 
-        result = play_round(words, is_evil)
+        result = play_round(words, is_evil, timer)
 
         if result:
             print "Congratulations!"
