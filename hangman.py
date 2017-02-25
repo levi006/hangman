@@ -6,7 +6,7 @@ from gallows import GALLOWS
 
 
 def set_timer():
-    """Choose whether to play with timed guesses"."""
+    """Choose whether to play with timed guesses."""
 
     while True:
         answer = str(raw_input('Would you like use timed guesses? [y/n] ')).lower().strip()
@@ -269,7 +269,7 @@ def play_round(words, is_evil, timer):
             if guesses_remaining == 1:
                 print "You still have one guess left."  
             else:
-                msg = "You have %d guesses left." % guesses_remaining
+
                 print "You've already guessed this letter." + msg         
             continue
 
