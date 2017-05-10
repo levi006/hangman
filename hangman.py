@@ -11,7 +11,6 @@ def set_timer():
     while True:
         answer = str(raw_input('Would you like use timed guesses? [y/n] ')).lower().strip()
 
-
         if answer == 'y':
             print "You have 10 seconds per guess."
             return True
